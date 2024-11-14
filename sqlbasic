@@ -1,0 +1,61 @@
+show databases;
+use example;
+
+show tables;
+#1 Retrieve all the data from the Customers table.
+select * from customers;
+
+#2 Get the first name and last name of all customers from the Customers table.
+select firstName, Lastname from customers;
+
+#3 Show the email addresses of customers who have a phone number starting with '555'.
+select email from customers where phone like '555%';
+
+#4 Find the customers who joined after '2022-01-01'.
+select * from customers where dateJoined > '2022-01-01';
+
+#5 List the first names and last names of customers whose last name is 'Smith'.
+select firstname, lastname from customers where lastname = 'Smith';
+
+#6 Sort the customers by FirstName in ascending order.
+select firstname from customers order by firstname asc;
+
+#7 Sort the Customers table by DateJoined in descending order.
+select datejoined from customers order by datejoined desc;
+
+#8 Show the first name, last name, and email of the first 3 customers.
+select firstname, lastname, email from customers limit 3;
+
+#9 Find the total number of customers in the Customers table.
+select count(*) from customers;
+
+#10 List the names of customers who have 'john' in their first name (case-insensitive).
+select firstname, lastname from customers where firstname like '%John%';
+
+#11 Find the customers who joined in the year 2021.
+select * from customers where year(datejoined) = '2021';
+
+#12 Retrieve all orders (OrderID and Amount) for customer with CustomerID 2
+select orderid, amount from orders where customerid = 2;
+
+#13 Retrieve the customer’s first name and total amount spent from the Orders table.
+SELECT Customers.FirstName, SUM(Orders.Amount) AS TotalSpent
+FROM Orders
+JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+GROUP BY Customers.CustomerID;
+
+#14 Find all orders where the Amount is greater than 100.
+select * from orders where amount > 100;
+
+#15 Get the number of orders made by each customer.
+select customerid, count(*) as numberoforders
+from orders
+group by customerid;
+
+#16 Retrieve all the orders placed in the month of 'March' 2023.
+SELECT * 
+FROM Orders
+WHERE YEAR(OrderDate) = 2023 AND MONTH(OrderDate) = 3;
+
+
+
