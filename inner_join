@@ -1,0 +1,93 @@
+use new;
+show tables;
+#Practicing inner join
+
+/*1. Basic INNER JOIN
+Get a list of all students and their enrolled courses.*/
+
+select
+students.studentid, students.studentname, enrollments.coursename
+from students
+inner join enrollments
+on students.studentid = enrollments.studentid;
+
+/* 2. Filter Results with WHERE
+Get the names of students who are enrolled in the course "Computer Science." */
+
+select s.studentname, e.coursename
+from students s
+join enrollments e
+on s.studentid = e.studentid
+where e.coursename = 'Computer Science';
+
+/* 3. Aggregate Function
+Find the total number of courses each student is enrolled in. */
+select s.studentname,
+count(e.coursename) as total_course
+from students s
+inner join enrollments e
+on s.studentid = e.studentid
+group by s.studentname;
+
+/*4. Filter by Date
+Get all students who enrolled after 2024-05-01. */
+select s.*, e.*
+from students s
+inner join enrollments e
+on s.studentid = e.studentid
+where e.enrollmentdate > '2024-05-01';
+
+/* 5. Join with Additional Details
+Get the student name, age, and the courses they are enrolled in, sorted by age. */
+select s.studentname, s.age, e.coursename
+from students s
+join enrollments e
+on s.studentid = e.studentid
+order by s.age;
+
+/* 6. Unique Students Enrolled in Each Course
+Find the unique count of students enrolled in each course.*/
+
+select e.coursename,
+count(distinct s.studentid) as uniquestudents
+from students s
+inner join enrollments e
+on s.studentid = e.studentid
+group by e.coursename;
+
+/* 7. Combine Conditions
+Find students who are either enrolled in "Mathematics" or are 22 years old. */
+select s.*, e.*
+from students s
+inner join enrollments e
+on s.studentid = e.studentid
+where e.coursename = 'Mathematics' or s.age = 22;
+
+/* 8. Join and Use Aliases
+Use aliases to simplify table names while retrieving the student name, course name, and enrollment date.*/
+select S.StudentName, E.CourseName, E.EnrollmentDate 
+from Students S 
+inner join Enrollments E 
+on S.StudentID = E.StudentID;
+
+/* 9. Find Students Enrolled in Multiple Courses
+Get a list of students who are enrolled in more than one course.*/
+
+select Students.StudentName,
+COUNT(Enrollments.CourseName) AS TotalCourses 
+from Students 
+inner join Enrollments 
+on Students.StudentID = Enrollments.StudentID 
+group by Students.StudentName 
+having COUNT(Enrollments.CourseName) > 1;
+
+/* 10. Exclude Students Not Enrolled in Any Course
+Find students who are not enrolled in any course (requires a LEFT JOIN, but useful for contrast).*/
+
+select Students.StudentName 
+from Students 
+left join Enrollments 
+on Students.StudentID = Enrollments.StudentID 
+where Enrollments.EnrollmentID IS NULL;
+
+
