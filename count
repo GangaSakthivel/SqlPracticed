@@ -1,0 +1,47 @@
+use new;
+
+/* +------------+---------+------------+----------+-------------+
+| EmployeeID | Name    | Department | Salary   | JoiningYear |
++------------+---------+------------+----------+-------------+
+|          1 | Alice   | HR         | 50000.00 |        2020 |
+|          2 | Bob     | IT         | 70000.00 |        2021 |
+|          3 | Charlie | Finance    | 60000.00 |        2020 |
+|          4 | David   | IT         | 80000.00 |        2021 |
+|          5 | Eve     | HR         | 55000.00 |        2020 |
+|          6 | Frank   | Finance    | 62000.00 |        2022 |
+|          7 | Grace   | IT         | 75000.00 |        2020 |
+|          8 | Hannah  | HR         | 52000.00 |        2021 |
++------------+---------+------------+----------+-------------+
+
+In SQL, the GROUP BY clause is used to group rows that have the same values in specified columns 
+into aggregated data (like SUM, COUNT, AVG, etc.). 
+It is often used in conjunction with aggregate functions to perform calculations on each group.
+*/
+
+
+#1. Total Salary by Department
+
+select department, sum(salary) as total_salary
+from employees
+group by department;
+
+#2. Count of Employees by Joining Year
+
+select joiningyear, count(employeeid)
+from employees
+group by joiningyear;
+
+
+#3. Average Salary by Department
+
+select department, avg(salary) as average_salary
+from employees
+group by department;
+
+#4. Maximum Salary by Department
+
+select department, max(salary) as maximum_salary
+from employees
+group by department;
+
+
