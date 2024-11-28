@@ -1,0 +1,56 @@
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    student_name VARCHAR(50),
+    course_id INT
+);
+
+INSERT INTO Students (student_id, student_name, course_id) VALUES
+(1, 'Ananya', 101),
+(2, 'Rahul', 102),
+(3, 'Meena', 103),
+(4, 'John', NULL);
+
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(50)
+);
+
+INSERT INTO Courses (course_id, course_name) VALUES
+(101, 'Data Science'),
+(102, 'Web Development'),
+(103, 'Cyber Security'),
+(104, 'AI and ML');
+
+
+#Write a query to retrieve the names of students along with the courses they are enrolled in.
+
+select s.student_name, c.course_name
+from students s
+inner join courses c
+on s.course_id = c.course_id;
+
+#Write a query to find all courses that have students enrolled.
+
+select c.course_name
+from courses c
+inner join students s on c.course_id = s.course_id;
+
+#Write a query to retrieve the student names and course names, but exclude students who have no course assigned.
+
+SELECT 
+    s.student_name,
+    c.course_name
+FROM 
+    Students s
+INNER JOIN 
+    Courses c
+ON 
+    s.course_id = c.course_id;
+    
+# write a query to retrieve students' names, course names, and the course duration.
+
+select s.student_name, c.course_name, c.course_duration
+from students s
+inner join courses c
+on s.course_id = c.course_id;
