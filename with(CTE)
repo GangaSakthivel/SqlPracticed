@@ -43,6 +43,82 @@ recentjoiners as
 from employee
 where joiningdate > '2018-01-01')
 select * from experiencedemp
+
+use t;
+select * from employee;
+
+/* 
+
+
+
+Filtering with a CTE:
+Create a CTE with employees who have more than 5 years of experience.
+Write a query to fetch their EmpID, Name, and Experience.
+
+Join Using a CTE:
+Create a CTE to calculate the average salary of each department. 
+Use this CTE to find employees whose salaries are above their department's average. Display their EmpID, Name, Department, and Salary.
+
+CTE with Date Filter:
+Use the WITH clause to find employees who joined before 2016. 
+Write a query to display their EmpID, Name, and JoiningDate.*/
+
+
+/* Simple CTE:
+Use the WITH clause to create a temporary table (CTE) that contains all employees from the "IT" department. 
+Write a query to display their names and salaries.*/
+
+with itemployees as
+(
+select empid, name, salary
+from employee
+where department = 'it')
+select * from itemployees;
+
+/*Aggregated CTE:
+Use the WITH clause to create a CTE that calculates the total salary of employees in each department. 
+Write a query to display the department name and total salary.*/
+
+with calculatetotal as 
+(
+select department, sum(salary) as total_salary
+from employee
+group by department)
+select * from calculatetotal;
+
+/*Create a CTE with employees who have more than 5 years of experience. Write a query to fetch their EmpID, Name, and Experience.*/
+
+with experienced_emp as
+(
+select empid, name, experience
+from employee
+where experience > 5)
+select * from experienced_emp;
+
+/*Join Using a CTE:
+Create a CTE to calculate the average salary of each department. 
+Use this CTE to find employees whose salaries are above their department's average. Display their EmpID, Name, Department, and Salary. */
+
+with average_Salary as
+(
+select department, avg(salary) as avg_salary
+from employee
+group by department)
+select e.empid, e.name, e.department, e.salary
+from employee e
+join average_salary a
+on e.department = a.department
+where e.salary > a.avg_salary;
+
+/* CTE with Date Filter:
+Use the WITH clause to find employees who joined before 2016. Write a query to display their EmpID, Name, and JoiningDate.*/
+
+with joiningdateemp as
+(
+select empid, name, joiningdate
+from employee
+where joiningdate < '2016-01-01')
+select * from joiningdateemp;
 union all
 select * from recentjoiners;
 																														
