@@ -1,0 +1,48 @@
+use t;
+show tables;
+
+select * from employee;
+
+# Write a query to use the WITH clause to calculate the average salary of employees by department.
+
+with Average_Salary as (
+select department, avg(salary) as averagesalary
+from employee
+group by department
+)
+select * from average_salary; 
+
+# Write a query to find employees with above-average salaries in their departments.
+
+with aboveaverage as
+(select department, avg(salary) as avg_salary
+from employee
+group by department)
+select e.empid, e.name, e.department, e.salary
+from employee e
+join aboveaverage a
+on e.department = a.department
+where e.salary > a.avg_Salary;
+
+/* Multiple CTEs in WITH clause:
+Write a query to find:
+
+Employees with more than 5 years of experience (ExperiencedEmp).
+Employees who joined after 2018 (RecentJoiners).
+sql
+Copy code
+*/
+
+with experiencedemp as
+(select empid, name, department, experience
+from employee
+where experience > 5),
+
+recentjoiners as
+(select empid, name, department, joiningdate
+from employee
+where joiningdate > '2018-01-01')
+select * from experiencedemp
+union all
+select * from recentjoiners;
+																														
