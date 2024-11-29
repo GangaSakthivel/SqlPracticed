@@ -1,0 +1,29 @@
+use s;
+show tables;
+
+/* +-----------+---------+------+-------+-------------------+
+| StudentID | Name    | Age  | Grade | Email             |
++-----------+---------+------+-------+-------------------+
+|         1 | Alice   |   20 | A     | alice@example.com |
+|         2 | Bob     | NULL | B     | NULL              |
+|         3 | Charlie |   19 | NULL  | charlie@email.com |
+|         4 | Diana   | NULL | NULL  | diana@email.com   |
+|         5 | Edward  |   22 | C     | NULL              |
++-----------+---------+------+-------+-------------------+*/
+
+#Find rows with NULL in the Age column:
+select * from students where age is null;
+
+#Find rows where the Email is missing:
+select * from students where email is null;
+
+#Replace NULL values in Age with 18:
+select studentid, name, coalesce(age, 18), grade, email from students;
+
+#Find rows where both Grade and Email are NULL:
+select * from students where grade is null and email is null;
+
+#Count how many rows have a NULL in the Email column:
+select count(*) from students where email is null;
+
+select studentid, name, nvl(age, 18), grade, email from students;
