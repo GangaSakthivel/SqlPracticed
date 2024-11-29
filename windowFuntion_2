@@ -1,0 +1,96 @@
+use t;
+show tables;
+select * from employees;
+
+/* EmpID | Name    | Department | Salary | JoiningDate |
++-------+---------+------------+--------+-------------+
+|     1 | Alice   | HR         |  50000 | 2020-01-15  |
+|     2 | Bob     | IT         |  60000 | 2019-03-10  |
+|     3 | Charlie | IT         |  60000 | 2021-07-19  |
+|     4 | David   | HR         |  55000 | 2020-09-23  |
+|     5 | Eve     | IT         |  70000 | 2018-11-12  */
+
+/*1. RANK()
+Assigns a rank to each row within a partition, with gaps in ranking if there are ties.*/
+
+select name, department, salary,
+rank() over(partition by department order by salary) as dept_rank
+from employees;
+
+/* name    | department | salary | dept_rank |
++---------+------------+--------+-----------+
+| Alice   | HR         |  50000 |         1 |
+| David   | HR         |  55000 |         2 |
+| Bob     | IT         |  60000 |         1 |
+| Charlie | IT         |  60000 |         1 |
+| Eve     | IT         |  70000 |         3 |
+*/
+
+/*2. DENSE_RANK()
+Similar to RANK() but without gaps in rankings.*/
+
+select name, department, salary,
+dense_rank() over(partition by department order by salary) as dept_rank
+from employees;
+
+/* +---------+------------+--------+-----------+
+| name    | department | salary | dept_rank |
++---------+------------+--------+-----------+
+| Alice   | HR         |  50000 |         1 |
+| David   | HR         |  55000 |         2 |
+| Bob     | IT         |  60000 |         1 |
+| Charlie | IT         |  60000 |         1 |
+| Eve     | IT         |  70000 |         2 |
++---------+------------+--------+-----------+*/
+
+
+/* . ROW_NUMBER()
+Assigns a unique number to each row, even for duplicates, within a partition.*/
+
+select name, department, salary,
+row_number() over(partition by department order by salary desc) as row_no
+from employees;
+
+/*+---------+------------+--------+--------+
+| name    | department | salary | row_no |
++---------+------------+--------+--------+
+| David   | HR         |  55000 |      1 |
+| Alice   | HR         |  50000 |      2 |
+| Eve     | IT         |  70000 |      1 |
+| Bob     | IT         |  60000 |      2 |
+| Charlie | IT         |  60000 |      3 |
++---------+------------+--------+--------+*/
+
+/*  LEAD()
+Accesses data from the next row within the same partition.*/
+
+SELECT Name, Department, Salary,
+       LEAD(Salary, 1) OVER (PARTITION BY Department ORDER BY Salary DESC) AS NextSalary
+FROM Employees;
+
+/*+---------+------------+--------+------------+
+| Name    | Department | Salary | NextSalary |
++---------+------------+--------+------------+
+| David   | HR         |  55000 |      50000 |
+| Alice   | HR         |  50000 |       NULL |
+| Eve     | IT         |  70000 |      60000 |
+| Bob     | IT         |  60000 |      60000 |
+| Charlie | IT         |  60000 |       NULL |
++---------+------------+--------+------------+*/
+
+/* Accesses data from the previous row within the same partition.*/
+
+SELECT Name, Department, Salary,
+       Lag(Salary, 1) OVER (PARTITION BY Department ORDER BY Salary DESC) AS NextSalary
+FROM Employees;
+
+/*
++---------+------------+--------+------------+
+| Name    | Department | Salary | NextSalary |
++---------+------------+--------+------------+
+| David   | HR         |  55000 |       NULL |
+| Alice   | HR         |  50000 |      55000 |
+| Eve     | IT         |  70000 |       NULL |
+| Bob     | IT         |  60000 |      70000 |
+| Charlie | IT         |  60000 |      60000 |
++---------+------------+--------+------------+*/
