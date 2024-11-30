@@ -1,0 +1,72 @@
+use common;
+show tables;
+
+#employees_a
+
+#intersect
+
+/*+------------+---------+
+| EmployeeID | Name    |
++------------+---------+
+|          1 | Alice   |
+|          2 | Bob     |
+|          3 | Charlie |
++------------+---------+*/
+
+#employees_b
+
+/* +------------+---------+
+| EmployeeID | Name    |
++------------+---------+
+|          2 | Bob     |
+|          3 | Charlie |
+|          4 | David   |
++------------+---------+*/
+select employeeid, name
+from employees_A
+intersect 
+select employeeid, name
+from employees_b;
+
+#or 
+
+select a.employeeid, b.name
+from employees_a a
+join 
+employees_b b 
+on a.employeeid = b.employeeid;
+
+#except
+
+select employeeid, name
+from employees_a
+except
+select employeeid, name
+from employees_b;
+
+#EXCEPT (or MINUS in some dialects)
+
+select a.employeeid, a.name
+from employees_a a
+left join 
+employees_b b 
+on a.employeeid = b.employeeid and a.name = b.name 
+where b.employeeid is null;
+
+SELECT a.EmployeeID, a.Name
+FROM Employees_A a
+LEFT JOIN Employees_B b
+ON a.EmployeeID = b.EmployeeID AND a.Name = b.Name
+WHERE b.EmployeeID IS NULL;
+
+#union
+select a.*
+from employees_a a
+inner join 
+employees_b b on a.employeeid = b.employeeid and a.name = b.name;
+
+#union all
+select a.*
+from employees_a a
+full join 
+employees_b b on a.employeeid = b.employeeid and a.name = b.name;
