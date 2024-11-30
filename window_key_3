@@ -1,0 +1,58 @@
+use common;
+#1. Using ROW_NUMBER():
+#Write a query to assign a unique rank to employees within each department based on their salary in descending order.
+
+select e.*, 
+row_number() over(partition by department order by salary desc) as unique_rank
+from employees e;
+
+#Using RANK() and DENSE_RANK():
+#Find the rank and dense rank of employees based on their salary across the entire company.
+
+select e.*, 
+row_number() over( order by salary desc) as unique_rank,
+dense_rank() over( order by salary desc) as dense_unique_rank
+from employees e;
+
+#Using LEAD():
+#Write a query to show each employee's salary and the next highest salary in the company.
+
+select e.name, e.salary,
+lead(salary) over(order by salary desc) as next_Sal
+from employees e;
+
+#Using LAG():
+#Write a query to display each employee's salary along with the previous salary in their department, ordered by salary.
+
+select e.name, e.salary, e.department,
+lag(salary) over(partition by department order by salary desc) as previous_Sal
+from employees e;
+
+/*To find the top 2 highest-paid employees in each department, along with their manager's name, using an INNER JOIN with ranking functions,
+ you can combine the RANK() function with a JOIN between the Employees and Managers tables.*/
+ 
+ WITH RankedEmployees AS (
+    SELECT 
+        e.EmpID,
+        e.EmployeeName,
+        e.Salary, 
+        e.Department,
+        e.ManagerID,
+        RANK() OVER (PARTITION BY e.Department ORDER BY e.Salary DESC) AS RankInDepartment
+    FROM 
+        Employees e
+)
+SELECT 
+    re.EmpID,
+    re.EmployeeName,
+    re.Salary, 
+    re.Department,
+    re.ManagerID
+FROM 
+    RankedEmployees re
+INNER JOIN 
+    Managers m ON m.ManagerID = re.ManagerID
+WHERE 
+    re.RankInDepartment <= 2
+ORDER BY 
+    re.Department, re.RankInDepartment;
