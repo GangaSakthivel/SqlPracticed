@@ -1,0 +1,40 @@
+use common;
+show tables;
+
+select * from suppliers;
+select * from products;
+
+#The following SQL statement returns TRUE and lists the suppliers with a product price less than 20:
+select suppliername
+from suppliers where exists (select productname from products where products.productid = suppliers.supplierid and price < 20);
+
+#The EXISTS operator checks whether the subquery returns any rows (i.e., whether there are any products with a price below 20 for the supplier).
+
+SELECT SupplierName
+FROM Suppliers
+WHERE EXISTS (SELECT ProductName FROM Products WHERE Products.SupplierID = Suppliers.supplierID AND Price = 22);
+
+/* Customers
++----+---------+
+| ID | Name    |
++----+---------+
+| 1  | Alice   |
+| 2  | Bob     |
+| 3  | Charlie |
++----+---------+
+
+Orders
++----+------------+---------+
+| ID | CustomerID | Amount  |
++----+------------+---------+
+| 1  | 1          | 100     |
+| 2  | 2          | 150     |
++----+------------+---------+*/
+
+#Let's use EXISTS to check if a customer has placed an order.
+
+select name from customers c 
+where exists(select 1 from orders o where o.customerid = c.id
+
+select name from customers c 
+where not exists(select 1 from orders o where o.customerid = c.id);
