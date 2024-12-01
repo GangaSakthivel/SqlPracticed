@@ -1,0 +1,48 @@
+use common;
+show tables;
+
+#working with dates
+
+/*+---------+------------+------------+------------+-------------+---------+
+| OrderID | CustomerID | OrderDate  | ShipDate   | TotalAmount | Status  |
++---------+------------+------------+------------+-------------+---------+
+|       1 | C001       | 2024-11-15 | 2024-11-17 |      150.50 | Shipped |
+|       2 | C002       | 2024-11-16 | 2024-11-19 |      220.75 | Pending |
+|       3 | C001       | 2024-11-17 | NULL       |       99.99 | Pending |
+|       4 | C003       | 2024-11-18 | 2024-11-20 |      310.60 | Shipped |
+|       5 | C002       | 2024-11-19 | 2024-11-21 |      120.00 | Shipped |
+|       6 | C004       | 2024-11-20 | NULL       |       75.30 | Pending |
++---------+------------+------------+------------+-------------+---------+*/
+
+# 1. Find all orders that have not been shipped yet.
+select * from orders where shipdate is null;
+
+#2. Find the total amount of all orders placed by C001.
+select sum(totalamount) from orders where customerid = 'c001';
+
+/*3. Find the number of days between the OrderDate and ShipDate for all shipped orders.
+We can use the DATEDIFF function to calculate the difference in days between OrderDate and ShipDate for orders with a status of 'Shipped'.*/
+
+select orderid, datediff(shipdate, orderdate) as dayship
+from orders
+where status = 'Shipped';
+
+/* Find the latest order placed (OrderDate) in the month of November 2024.
+To find the latest order placed in November 2024, we can use ORDER BY and limit the result to one row.*/
+
+select orderid, orderdate
+from orders 
+where orderdate between '2024-11-01' and '2024-11-30'
+order by orderdate desc
+limit 1;
+
+/*5. Calculate the average TotalAmount for all shipped orders.
+To calculate the average TotalAmount for shipped orders, we can use the AVG() function.*/
+
+select avg(totalamount) from orders where status = 'Shipped' ;
+
+/*Find all customers who have placed orders in the month of November 2024.
+To find all customers who have placed orders in November 2024, we can filter OrderDate and group by CustomerID.*/
+
+select distinct customerid from orders where orderdate between '2024-11-01' and '2024-11-30';
+
