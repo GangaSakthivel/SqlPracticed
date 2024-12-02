@@ -1,0 +1,232 @@
+questions:
+-------------------------------------------------------------
+
+question 1:
+----------
+Find the 3rd highest salary from the employeeinfo table:
+
+select salary from employeeinfo order by salary desc;
++----------+
+| salary   |
++----------+
+| 92000.00 |
+| 91000.00 |
+| 82000.00 |
+| 78000.00 |
+| 74000.00 |
+| 73000.00 |
+| 71000.00 |
+| 71000.00 |
+| 69000.00 |
+| 68000.00 |
+| 67000.00 |
+| 67000.00 |
+| 65000.00 |
+| 62000.00 |
++----------+
+
+
+ select salary from employeeinfo order by salary desc limit 1 offset 2;
+
+OUTPUT
++----------+
+| salary   |
++----------+
+| 82000.00 |
++----------+
+
+or 
+
+with thirdHighest as
+(
+select e.salary,
+rank() over(order by salary desc) as rnk_3
+from employeeinfo e 
+)
+select salary 
+from thirdHighest
+where thirdHighest.rnk_3 = 3;
+
+OUTPUT:
+
++----------+
+| salary   |
++----------+
+| 82000.00 |
++----------+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+question 2:
+-------------
+find the nth highest salary from the table without using top or limit
+
+
+select salary from employeeinfo e1
+where 1-1 = (
+select count(distinct salary) 
+from employeeinfo e2
+where e2.salary > e1.salary
+);
+
+output:
++----------+
+| salary   |
++----------+
+| 92000.00 |
++----------+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+question 3:
+------------
+find duplicate rows from a table
+
+
+ SELECT * FROM USERS;
++----+------------------+
+| ID | Email            |
++----+------------------+
+|  1 | john@example.com |
+|  2 | jane@example.com |
+|  3 | john@example.com |
+|  4 | mike@example.com |
+|  5 | jane@example.com |
++----+------------------+
+
+SELECT EMAIL, COUNT(*)
+FROM USERS
+GROUP BY EMAIL
+HAVING COUNT(*) > 1;
+
+OUTPUT:
+
++------------------+----------+
+| EMAIL            | COUNT(*) |
++------------------+----------+
+| john@example.com |        2 |
+| jane@example.com |        2 |
++------------------+----------+
+
+question 4:
+--------------
+calculate the even and odd records from the table
+
+
+#even
+select emp_id from employeeinfo 
+where emp_id % 2 = 0;
+#or 
+select * from employeeinfo
+where mod(emp_id, 2) = 0;
+
++--------+
+| emp_id |
++--------+
+|      8 |
+|     10 |
+|     12 |
+|     14 |
+|     16 |
+|     18 |
+|     20 |
++--------+
+
+
+#odd
+select emp_id from employeeinfo 
+where emp_id % 2 = 1;
+#or 
+select * from employeeinfo
+where mod(emp_id, 2) = 1;
+
++--------+
+| emp_id |
++--------+
+|      7 |
+|      9 |
+|     11 |
+|     13 |
+|     15 |
+|     17 |
+|     19 |
++--------+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+question 5:
+-----------
+display the first and last row from the employeeinfo table
+
+#first row
+select * from users where id = (select min(id) from users);
++----+------------------+
+| ID | Email            |
++----+------------------+
+|  1 | john@example.com |
++----+------------------+
+
+#last row
+
+select * from users where id = (select max(id) from users);
++----+------------------+
+| ID | Email            |
++----+------------------+
+|  5 | jane@example.com |
++----+------------------+
+
+question 6:
+--------------
+how do you copy all rows of a table using sql query 
+
+select * from employeeinfo;
+
+create table empDetails as select * from employeeinfo;
+
+select * from empdetails;
+
+create table emp_salary as select emp_id, salary from employeeinfo;
+
+select * from emp_salary;
+
+create table emp as select * from employeeinfo where  = 4;
+
+select * from emp;
+
+
+question 7:
+--------------
+Retrieve the list of employees working in the same department
+
+select distinct e1.emp_id, e1.first_name, e1.last_name, e1.department
+from employees e1, employees e2 
+where e1.department = e2.department
+and e1.emp_id != e2.emp_id;
+
+
+
+question 8:
+--------------
+Retrieve the last 3 recors from employeeinfo table
+
+ SELECT *
+ FROM Employees
+ORDER BY emp_id DESC
+ LIMIT 3;
++--------+------------+-----------+------------+----------+------------+----------+------------+---------------------------+
+| emp_id | first_name | last_name | department | salary   | hire_date  | city     | manager_id | email                     |
++--------+------------+-----------+------------+----------+------------+----------+------------+---------------------------+
+|      8 | Sophia     | Taylor    | Sales      | 75000.00 | 2019-12-15 | Chicago  |          7 | sophia.taylor@example.com |
+|      7 | David      | Wilson    | Sales      | 73000.00 | 2018-07-30 | Chicago  |          8 | david.wilson@example.com  |
+|      6 | Emily      | Davis     | HR         | 68000.00 | 2021-09-25 | New York |          5 | emily.davis@example.com   |
++--------+------------+-----------+------------+----------+------------+----------+------------+---------------------------+
+
+
+question 9:
+-------------
+fetch details of employee whose name ends with an alphabet 'A' and contains five alphabets
+
+
+SELECT first_name, last_name, department FROM Employees WHERE last_name LIKE '____A';
+emp_id	first_name	last_name	department
+5	        Charlie	   Silva	    IT
+6        	Emma	     Maria	    HR
+7	        Olivia	   Costa	   Marketing
