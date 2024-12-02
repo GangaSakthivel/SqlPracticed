@@ -1,0 +1,52 @@
+CREATE TABLE CountryDetails (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    countryname VARCHAR(100) NOT NULL,
+    capitalcity VARCHAR(100) NOT NULL
+);
+
+
+INSERT INTO CountryDetails (countryname, capitalcity)
+VALUES
+('India', 'New Delhi'),
+('USA', 'Washington, D.C.'),
+('France', 'Paris'),
+('India', 'New Delhi'),         -- Duplicate
+('Germany', 'Berlin'),
+('Japan', 'Tokyo'),
+('France', 'Paris'),            -- Duplicate
+('Australia', 'Canberra'),
+('India', 'New Delhi');         -- Duplicate
+
+Method 1: using DELETE statement
+  
+delete c1 
+from cd c1
+join cd c2
+on c1.countryname = c2.capitalcity
+and c1.capitalcity = c2.capitalcity
+where c1.id > c2.id;
+
+Method 2: add unique or DISTINCT records
+
+CREATE TABLE new_cd AS
+SELECT MIN(id) AS id, countryname, capitalcity
+FROM cd
+GROUP BY countryname, capitalcity;
+
+select * from new_cd;
+
+Once you have populated the new table, you can delete the old table and rename the new table to the old table, as shown below. 
+The syntax may look different if you use different databases.
+
+Method 3: using ROW_NUMBER() function
+
+  WITH cte AS (
+    SELECT id, ROW_NUMBER() OVER (PARTITION BY countryname, capitalcity ORDER BY id) AS row_no
+    FROM cd
+)
+DELETE FROM cd
+WHERE id IN (
+    SELECT id FROM cte WHERE row_no > 1
+);
+
+select * from cd;
