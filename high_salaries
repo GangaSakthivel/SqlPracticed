@@ -1,0 +1,89 @@
+use w;
+
+/*+----+-----------+----------+--------+----------+
+| id | firstname | lastname | gender | salary   |
++----+-----------+----------+--------+----------+
+|  1 | John      | Doe      | Male   | 55000.00 |
+|  2 | Jane      | Smith    | Female | 62000.00 |
+|  3 | Mike      | Brown    | Male   | 48000.00 |
+|  4 | Emily     | Davis    | Female | 70000.00 |
+|  5 | Chris     | Wilson   | Male   | 51000.00 |
+|  6 | Laura     | Taylor   | Female | 56000.00 |
+|  7 | James     | Anderson | Male   | 45000.00 |
+|  8 | Sophia    | Martin   | Female | 75000.00 |
++----+-----------+----------+--------+----------+*/
+
+#highest salary
+
+select max(salary) from e;
+
+select salary from e order by salary desc limit 1;
+
+select salary from e where salary = (select max(salary) from e);
+
+#second hgihest salary
+
+select salary from e order by salary desc limit 1 offset 1;
+
+SELECT MAX(salary)
+FROM e
+WHERE salary < (SELECT MAX(salary) FROM e);
+
+
+#nth highest salary
+
+select salary from
+(select distinct salary
+from e
+order by salary desc
+) sub
+order by salary desc
+limit 1 offset 0;
+
+select salary from
+(select salary 
+from e
+order by salary desc) sub 
+order by salary desc limit 1 offset 6;
+
+
+select distinct salary 
+from e
+order by salary desc;
+
+
+#finding highest salary using CTE
+
+with highestSalary as(
+select distinct salary
+from e
+order by salary desc)  
+select salary 
+from highestsalary 
+limit 1 offset 2;
+
+with lowsalary as
+(select salary 
+from e
+order by salary asc
+)
+select salary
+from lowsalary
+limit 1;
+
+
+select salary, 
+dense_rank() over(order by salary desc) as high_rank 
+from e;
+
+select salary from e order by salary asc;
+
+with cte as
+(
+select salary, 
+dense_rank() over(order by salary desc) as high_rank 
+from e
+) 
+select salary
+from cte 
+where high_rank = 3;
