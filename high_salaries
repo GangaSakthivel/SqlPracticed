@@ -87,3 +87,82 @@ from e
 select salary
 from cte 
 where high_rank = 3;
+
+
+use w;
+
+/*+--------------+----------------+
+| DepartmentID | DepartmentName |
++--------------+----------------+
+|            1 | HR             |
+|            2 | Engineering    |
+|            3 | Sales          |
++--------------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from employees;
++------------+-----------+----------+--------------+----------+------------+
+| EmployeeID | FirstName | LastName | DepartmentID | Salary   | DateHired  |
++------------+-----------+----------+--------------+----------+------------+
+|          1 | Alice     | Smith    |            1 | 50000.00 | 2020-01-15 |
+|          2 | Bob       | Johnson  |            1 | 60000.00 | 2018-03-22 |
+|          3 | Charlie   | Williams |            2 | 70000.00 | 2019-07-30 |
+|          4 | David     | Brown    |            2 | 80000.00 | 2017-11-11 |
+|          5 | Eve       | Davis    |            3 | 90000.00 | 2021-02-25 |
+|          6 | Frank     | Miller   |            3 | 55000.00 | 2020-09-10 |
+|          7 | Grace     | Wilson   |            2 | 75000.00 | 2016-04-05 |
+|          8 | Henry     | Moore    |            1 | 65000.00 | 2022-06-17 |
++------------+-----------+----------+--------------+----------+------------+*/
+
+#find the top three highest paid employees in each department
+
+#step 1
+select e.employeeid, e.firstname, e.lastname, e.salary, d.departmentname
+from employees e
+join departments d
+on e.departmentid = d.departmentid;
+
+#step 2
+select e.employeeid, e.firstname, e.lastname, e.salary, d.departmentname,
+row_number() over(partition by e.departmentid order by e.salary desc)
+from employees e
+join departments d
+on e.departmentid = d.departmentid;
+
+#step 3
+with cte as(
+select e.employeeid, e.firstname, e.lastname, e.salary, d.departmentname,
+row_number() over(partition by e.departmentid order by e.salary desc) as rnk
+from employees e
+join departments d
+on e.departmentid = d.departmentid)
+select  employeeid, firstname, lastname, salary, departmentname 
+from cte 
+where rnk <= 3;
+
+
+#average salary of employee hired in the last five years
+
+#step 1
+SELECT * 
+FROM Employees 
+WHERE datehired >= CURRENT_DATE - INTERVAL 5 YEAR;
+
+#step 2
+#calculate the average
+
+select round(avg(salary))
+from employees
+where datehired >= current_date - interval 5 year;
+
+select round(max(salary), 2) from employees;
+
+#find the employees whose salary less than the average salary of employees hired in the last five years
+
+select * from employees 
+where salary < 
+(
+select avg(salary) 
+from employees
+where datehired >= current_date - interval 5 year
+);
