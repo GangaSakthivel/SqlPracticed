@@ -1,0 +1,94 @@
+use e;
+show tables;
+
+select * from worker;
+select * from bonus;
+
+#write a query to list worker id who does not get any bonus
+select worker_id from worker where worker_id not in(select worker_ref_id from bonus);
+
+#fetch 50% record from the table
+select * from worker where worker_id <= (select count(worker_id) / 2 from worker);
+
+select * from customers where customerid <= (select count(customerid) / 2 from worker);
+
+#write a query to get departments that has less than 4 people in it;
+select department,count(department) as dept_count
+from worker
+group by department
+having dept_count < 4;
+
+#select department along with the number of people in it
+select department, count(department) from worker group by department;
+
+#first record
+select * from worker where worker_id = (select min(worker_id) from worker);
+select worker_id from worker order by worker_id asc limit 1;
+
+select * from worker where worker_id = (select max(worker_id) from worker);
+select worker_id from worker order by worker_id desc limit 1;
+
+#last five records 
+select worker_id from worker order by worker_id desc limit 5;
+
+#write a sql query to print the max salary in each department
+select max(salary), department, count(department)
+from worker
+group by department;
+
+set sql_safe_updates = 0;
+
+with cte as
+(select id, 
+row_number() over(partition by name, value order by id) as row_num
+from your_table)
+delete from your_Table
+where id in(select id from cte where row_num > 1);
+
+
+
+SELECT e.*
+FROM employees e
+LEFT JOIN departments d
+ON e.department_id = d.department_id
+WHERE d.department_id IS NULL;
+
+#Employees with more than their department avg salary
+WITH averageSalary AS (
+    SELECT 
+        employee_id,
+        employee_name,
+        salary,
+        department_id,
+        AVG(salary) OVER (PARTITION BY department_id) AS avg_sal
+    FROM employees
+)
+SELECT
+    a.employee_id,
+    a.employee_name,
+    a.salary,
+    a.department_id,
+    a.avg_sal
+FROM averageSalary a
+WHERE a.salary > a.avg_sal;
+
+#Top 3 highest-paid employees in each department:
+SELECT *
+FROM (
+    SELECT e.*, RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS ranke
+    FROM Employees e
+) ranked
+WHERE ranke <= 3;
+
+WITH SalaryCounts AS (
+    SELECT SALARY, 
+           COUNT(*) AS CountWorkers
+    FROM Worker
+    GROUP BY SALARY
+    HAVING COUNT(*) > 1
+)
+SELECT w.WORKER_ID, w.FIRST_NAME, w.LAST_NAME, w.SALARY
+FROM Worker w
+JOIN SalaryCounts sc
+  ON w.SALARY = sc.SALARY;
+
